@@ -1,3 +1,4 @@
+import { loginApi } from "@api/auth";
 import Center from "@components/center";
 import CustomTextField from "@components/customTextField";
 import LoadingButton from "@components/loadingButton";
@@ -16,9 +17,8 @@ import {
 } from "@mui/material";
 import useUserStore, { User } from "@stores/userStore";
 import { Prettify } from "@utils/prettify";
-import loginApi from "@api/auth";
 import { jwtDecode } from "jwt-decode";
-import { useCallback, useState, KeyboardEvent, FormEvent } from "react";
+import { FormEvent, useCallback, useState, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -70,96 +70,107 @@ export default function Login() {
       <Paper
         elevation={1}
         sx={{
-          padding: "32px",
-          width: "66%",
+          padding: { xs: 2, sm: 3 },
+          width: { xs: "80%", sm: "66%" },
           maxWidth: "500px",
           display: "flex",
           flexDirection: "column",
+          borderRadius: 4,
         }}
       >
         <Logo />
-        <Typography variant="subtitle1" textAlign="center" mb={1}>
+        <Typography
+          variant="subtitle1"
+          textAlign="center"
+          mb={{ xs: 2, sm: 3 }}
+        >
           Your Social Campaigns
         </Typography>
         <form onSubmit={login}>
-          <Stack>
-            <Box>
-              <Typography
-                variant="subtitle1"
-                fontWeight={600}
-                component="label"
-                htmlFor="username"
-                mb="5px"
-              >
-                Username
-              </Typography>
-              <CustomTextField
-                type="email"
-                variant="outlined"
-                autoComplete="username"
-                fullWidth
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={handleKeyPress}
-              />
-            </Box>
-            <Box mt="25px">
-              <Typography
-                variant="subtitle1"
-                fontWeight={600}
-                component="label"
-                htmlFor="password"
-                mb="5px"
-              >
-                Password
-              </Typography>
-              <CustomTextField
-                type="password"
-                variant="outlined"
-                autoComplete="current-password"
-                fullWidth
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={handleKeyPress}
-              />
-            </Box>
-            <Stack
-              justifyContent="space-between"
-              direction="row"
-              alignItems="center"
-              my={2}
+        <Stack marginY={{ xs: 2, sm: 3 }} useFlexGap spacing={{ xs: 2, sm: 3 }}>
+          <Box>
+            <Typography
+              variant="subtitle1"
+              fontWeight={600}
+              component="label"
+              htmlFor="username"
+              mb="5px"
             >
-              <FormGroup>
-                <FormControlLabel
-                  control={<Checkbox defaultChecked />}
-                  label="Remember this Device"
-                />
-              </FormGroup>
-              <Typography
-                component={Link}
-                href="/forgot-password"
-                fontWeight="500"
-                sx={{
-                  textDecoration: "none",
-                  color: "primary.main",
-                }}
-              >
-                Forgot Password ?
-              </Typography>
-            </Stack>
-          </Stack>
-          <LoadingButton
-            color="primary"
-            variant="contained"
-            size="large"
-            fullWidth
-            type="submit"
-            loading={loading}
+              Email
+            </Typography>
+            <CustomTextField
+              type="email"
+              variant="outlined"
+              autoComplete="email"
+              autoFocus
+              fullWidth
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={handleKeyPress}
+            />
+          </Box>
+          <Box>
+            <Typography
+              variant="subtitle1"
+              fontWeight={600}
+              component="label"
+              htmlFor="password"
+              mb="5px"
+            >
+              Password
+            </Typography>
+            <CustomTextField
+              type="password"
+              variant="outlined"
+              autoComplete="current-password"
+              fullWidth
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handleKeyPress}
+            />
+          </Box>
+          <Stack
+            justifyContent="space-between"
+            direction="row"
+            alignItems="center"
           >
-            Sign In
-          </LoadingButton>
+            <FormGroup>
+              <FormControlLabel
+                control={<Checkbox defaultChecked />}
+                label="Remember this Device"
+              />
+            </FormGroup>
+            <Typography
+              component={Link}
+              href="/forgot-password"
+              fontWeight="500"
+              sx={{
+                textDecoration: "none",
+                color: "primary.main",
+              }}
+            >
+              Forgot Password ?
+            </Typography>
+          </Stack>
+        </Stack>
+        <LoadingButton
+          color="primary"
+          variant="contained"
+          size="large"
+          fullWidth
+          type="submit"
+          onClick={login}
+          loading={loading}
+        >
+          Login
+        </LoadingButton>
         </form>
-        <Stack direction="row" spacing={1} justifyContent="center" mt={3}>
+        <Stack
+          direction="row"
+          spacing={1}
+          justifyContent="center"
+          mt={{ xs: 2, sm: 3 }}
+        >
           <Typography color="textSecondary" variant="h6" fontWeight="400">
             New to Modernize?
           </Typography>

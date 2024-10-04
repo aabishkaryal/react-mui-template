@@ -1,10 +1,9 @@
-import { Box, Button, CircularProgress } from "@mui/material";
+import { Box, Button, ButtonProps, CircularProgress } from "@mui/material";
 import { green } from "@mui/material/colors";
 import { Prettify } from "@utils/prettify";
-import { ComponentProps } from "react";
 
 type LoadingButtonProps = Prettify<
-  ComponentProps<typeof Button> & {
+  ButtonProps & {
     loading: boolean;
     progressColor?: string;
     progressSize?: number;
