@@ -1,4 +1,4 @@
-import { apiRequest } from "@utils/apiRequest";
+import { apiRequest } from "@/utils/apiRequest";
 
 type loginParams = {
   email: string;
@@ -80,4 +80,3 @@ export async function verifyTokenApi({ token, abortSignal }: verifyParams) {
   }
   return true;
 }
-

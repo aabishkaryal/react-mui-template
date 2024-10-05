@@ -1,8 +1,11 @@
-import { loginApi } from "@api/auth";
-import Center from "@components/center";
-import CustomTextField from "@components/customTextField";
-import LoadingButton from "@components/loadingButton";
-import Logo from "@components/logo";
+import { loginApi } from "@/api/auth";
+import Center from "@/components/center";
+import CustomTextField from "@/components/customTextField";
+import LoadingButton from "@/components/loadingButton";
+import Logo from "@/components/logo";
+import useUserStore from "@/stores/userStore";
+import { Prettify } from "@/types/prettify";
+import { User } from "@/types/user";
 import {
   Box,
   Checkbox,
@@ -15,10 +18,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import useUserStore, { User } from "@stores/userStore";
-import { Prettify } from "@utils/prettify";
 import { jwtDecode } from "jwt-decode";
-import { FormEvent, useCallback, useState, KeyboardEvent } from "react";
+import { FormEvent, KeyboardEvent, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -31,35 +32,39 @@ export default function Login() {
   const updateUser = useUserStore((store) => store.updateUser);
   const navigate = useNavigate();
 
-  const login = useCallback((e?: FormEvent) => {
-    e?.preventDefault();
-    // TODO: check for valid email
-    if (email === "" || password === "") {
-      setSnackBarMessage("Please enter your email and password");
-      setSnackBarOpen(true);
-      return;
-    }
-    setLoading(true);
-    loginApi({ email, password })
-      .then((token) => {
-        const payload = jwtDecode<Prettify<Omit<User, "token">>>(token);
-        updateUser({ ...payload, token });
-        navigate("/");
-      })
-      .catch((error) => {
-        setSnackBarMessage(error.message);
+  const login = useCallback(
+    (e?: FormEvent) => {
+      e?.preventDefault();
+      // TODO: check for valid email
+      if (email === "" || password === "") {
+        setSnackBarMessage("Please enter your email and password");
         setSnackBarOpen(true);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [email, navigate, password, updateUser]);
+        return;
+      }
+      setLoading(true);
+      loginApi({ email, password })
+        .then((token) => {
+          const payload = jwtDecode<Prettify<Omit<User, "token">>>(token);
+          updateUser({ ...payload, token });
+          navigate("/");
+        })
+        .catch((error) => {
+          setSnackBarMessage(error.message);
+          setSnackBarOpen(true);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [email, navigate, password, updateUser]
+  );
 
   const handleCloseSnackBar = useCallback(() => {
     setSnackBarOpen(false);
   }, []);
 
-  const handleKeyPress = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyPress = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
       if (event.key === "Enter") login();
     },
     [login]
@@ -87,83 +92,87 @@ export default function Login() {
           Your Social Campaigns
         </Typography>
         <form onSubmit={login}>
-        <Stack marginY={{ xs: 2, sm: 3 }} useFlexGap spacing={{ xs: 2, sm: 3 }}>
-          <Box>
-            <Typography
-              variant="subtitle1"
-              fontWeight={600}
-              component="label"
-              htmlFor="username"
-              mb="5px"
-            >
-              Email
-            </Typography>
-            <CustomTextField
-              type="email"
-              variant="outlined"
-              autoComplete="email"
-              autoFocus
-              fullWidth
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={handleKeyPress}
-            />
-          </Box>
-          <Box>
-            <Typography
-              variant="subtitle1"
-              fontWeight={600}
-              component="label"
-              htmlFor="password"
-              mb="5px"
-            >
-              Password
-            </Typography>
-            <CustomTextField
-              type="password"
-              variant="outlined"
-              autoComplete="current-password"
-              fullWidth
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={handleKeyPress}
-            />
-          </Box>
           <Stack
-            justifyContent="space-between"
-            direction="row"
-            alignItems="center"
+            marginY={{ xs: 2, sm: 3 }}
+            useFlexGap
+            spacing={{ xs: 2, sm: 3 }}
           >
-            <FormGroup>
-              <FormControlLabel
-                control={<Checkbox defaultChecked />}
-                label="Remember this Device"
+            <Box>
+              <Typography
+                variant="subtitle1"
+                fontWeight={600}
+                component="label"
+                htmlFor="username"
+                mb="5px"
+              >
+                Email
+              </Typography>
+              <CustomTextField
+                type="email"
+                variant="outlined"
+                autoComplete="email"
+                autoFocus
+                fullWidth
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onKeyDown={handleKeyPress}
               />
-            </FormGroup>
-            <Typography
-              component={Link}
-              href="/forgot-password"
-              fontWeight="500"
-              sx={{
-                textDecoration: "none",
-                color: "primary.main",
-              }}
+            </Box>
+            <Box>
+              <Typography
+                variant="subtitle1"
+                fontWeight={600}
+                component="label"
+                htmlFor="password"
+                mb="5px"
+              >
+                Password
+              </Typography>
+              <CustomTextField
+                type="password"
+                variant="outlined"
+                autoComplete="current-password"
+                fullWidth
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={handleKeyPress}
+              />
+            </Box>
+            <Stack
+              justifyContent="space-between"
+              direction="row"
+              alignItems="center"
             >
-              Forgot Password ?
-            </Typography>
+              <FormGroup>
+                <FormControlLabel
+                  control={<Checkbox defaultChecked />}
+                  label="Remember this Device"
+                />
+              </FormGroup>
+              <Typography
+                component={Link}
+                href="/forgot-password"
+                fontWeight="500"
+                sx={{
+                  textDecoration: "none",
+                  color: "primary.main",
+                }}
+              >
+                Forgot Password ?
+              </Typography>
+            </Stack>
           </Stack>
-        </Stack>
-        <LoadingButton
-          color="primary"
-          variant="contained"
-          size="large"
-          fullWidth
-          type="submit"
-          onClick={login}
-          loading={loading}
-        >
-          Login
-        </LoadingButton>
+          <LoadingButton
+            color="primary"
+            variant="contained"
+            size="large"
+            fullWidth
+            type="submit"
+            onClick={login}
+            loading={loading}
+          >
+            Login
+          </LoadingButton>
         </form>
         <Stack
           direction="row"

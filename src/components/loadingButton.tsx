@@ -1,6 +1,6 @@
+import { Prettify } from "@/types/prettify";
 import { Box, Button, ButtonProps, CircularProgress } from "@mui/material";
 import { green } from "@mui/material/colors";
-import { Prettify } from "@utils/prettify";
 
 type LoadingButtonProps = Prettify<
   ButtonProps & {

@@ -1,11 +1,10 @@
+import { APP_BAR_HEIGHT, OPEN_DRAWER_WIDTH } from "@/utils/constants";
 import MenuIcon from "@mui/icons-material/Menu";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
 import { styled } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { OPEN_DRAWER_WIDTH } from "@utils/constants";
-import { memo } from "react";
 
 interface StyledAppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -15,6 +14,7 @@ const StyledAppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })<StyledAppBarProps>(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
+  height: APP_BAR_HEIGHT,
   transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -34,7 +34,7 @@ type AppBarProps = {
   handleDrawerOpen: () => void;
 };
 
-const AppBar = memo(({ open, handleDrawerOpen }: AppBarProps) => {
+export default function AppBar({ open, handleDrawerOpen }: AppBarProps) {
   return (
     <StyledAppBar position="fixed" open={open}>
       <Toolbar>
@@ -55,8 +55,4 @@ const AppBar = memo(({ open, handleDrawerOpen }: AppBarProps) => {
       </Toolbar>
     </StyledAppBar>
   );
-});
-
-AppBar.displayName = "AppBar";
-
-export default AppBar;
+}

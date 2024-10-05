@@ -1,4 +1,4 @@
-import useUserStore from "@stores/userStore";
+import useUserStore from "@/stores/userStore";
 import { useMemo } from "react";
 
 type RestrictedProps = {
@@ -12,7 +12,7 @@ export default function Restricted({ to, children }: RestrictedProps) {
   const hasAccess = useMemo(() => {
     if (!privileges) return false;
     if (Array.isArray(to)) {
-      return to.every(item => privileges.includes(item));
+      return to.every((item) => privileges.includes(item));
     }
     return privileges.includes(to);
   }, [privileges, to]);

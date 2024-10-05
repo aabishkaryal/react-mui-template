@@ -1,18 +1,20 @@
-import AppLayout from "@components/appLayout";
+import AppLayout from "@/components/appLayout";
+import darkTheme from "@/utils/dark-theme";
+import lightTheme from "@/utils/light-theme";
 import { CssBaseline, ThemeProvider, useMediaQuery } from "@mui/material";
-import Home from "@pages/home";
-import Login from "@pages/login";
-import Logout from "@pages/logout";
-import NotFound from "@pages/not-found";
-import Register from "@pages/register";
-import darkTheme from "@utils/dark-theme";
-import lightTheme from "@utils/light-theme";
+import { lazy } from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
   RouterProvider,
 } from "react-router-dom";
+
+const Home = lazy(() => import("@/pages/home"));
+const Login = lazy(() => import("@/pages/login"));
+const Logout = lazy(() => import("@/pages/logout"));
+const NotFound = lazy(() => import("@/pages/not-found"));
+const Register = lazy(() => import("@/pages/register"));
 
 const router = createBrowserRouter(
   createRoutesFromElements(

@@ -1,8 +1,11 @@
-import { registerApi } from "@api/auth";
-import Center from "@components/center";
-import CustomTextField from "@components/customTextField";
-import LoadingButton from "@components/loadingButton";
-import Logo from "@components/logo";
+import { registerApi } from "@/api/auth";
+import Center from "@/components/center";
+import CustomTextField from "@/components/customTextField";
+import LoadingButton from "@/components/loadingButton";
+import Logo from "@/components/logo";
+import useUserStore from "@/stores/userStore";
+import { Prettify } from "@/types/prettify";
+import { User } from "@/types/user";
 import {
   Box,
   Link,
@@ -12,10 +15,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import useUserStore, { User } from "@stores/userStore";
-import { Prettify } from "@utils/prettify";
 import { jwtDecode } from "jwt-decode";
-import { useCallback, useState, FormEvent } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
@@ -29,42 +30,45 @@ export default function Register() {
   const updateUser = useUserStore((store) => store.updateUser);
   const navigate = useNavigate();
 
-  const register = useCallback((e?: FormEvent) => {
-    e?.preventDefault();
-    if (name === "" || email === "" || password === "") {
-      setSnackBarMessage("Please enter your name, email and password");
-      setSnackBarOpen(true);
-      return;
-    }
-    if (!email.includes("@")) {
-      setSnackBarMessage("Please enter a valid email");
-      setSnackBarOpen(true);
-      return;
-    }
-    if (password.length < 8) {
-      setSnackBarMessage("Password must be at least 8 characters");
-      setSnackBarOpen(true);
-      return;
-    }
-    if (name.length < 3) {
-      setSnackBarMessage("Name must be at least 3 characters");
-      return; 
-    }
-    setLoading(true);
-    registerApi({ name, email, password })
-      .then((token) => {
-        const payload = jwtDecode<Prettify<Omit<User, "token">>>(token);
-        updateUser({ ...payload, token });
-        navigate("/");
-      })
-      .catch((error) => {
-        setSnackBarMessage(error.message);
+  const register = useCallback(
+    (e?: FormEvent) => {
+      e?.preventDefault();
+      if (name === "" || email === "" || password === "") {
+        setSnackBarMessage("Please enter your name, email and password");
         setSnackBarOpen(true);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [email, name, navigate, password, updateUser]);
+        return;
+      }
+      if (!email.includes("@")) {
+        setSnackBarMessage("Please enter a valid email");
+        setSnackBarOpen(true);
+        return;
+      }
+      if (password.length < 8) {
+        setSnackBarMessage("Password must be at least 8 characters");
+        setSnackBarOpen(true);
+        return;
+      }
+      if (name.length < 3) {
+        setSnackBarMessage("Name must be at least 3 characters");
+        return;
+      }
+      setLoading(true);
+      registerApi({ name, email, password })
+        .then((token) => {
+          const payload = jwtDecode<Prettify<Omit<User, "token">>>(token);
+          updateUser({ ...payload, token });
+          navigate("/");
+        })
+        .catch((error) => {
+          setSnackBarMessage(error.message);
+          setSnackBarOpen(true);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [email, name, navigate, password, updateUser]
+  );
 
   const handleCloseSnackBar = useCallback(() => {
     setSnackBarOpen(false);
@@ -88,7 +92,11 @@ export default function Register() {
           Your Social Campaigns
         </Typography>
         <form onSubmit={register}>
-          <Stack marginY={{ xs: 2, sm: 3 }} useFlexGap spacing={{ xs: 2, sm: 3 }}>
+          <Stack
+            marginY={{ xs: 2, sm: 3 }}
+            useFlexGap
+            spacing={{ xs: 2, sm: 3 }}
+          >
             <Box>
               <Typography
                 variant="subtitle1"

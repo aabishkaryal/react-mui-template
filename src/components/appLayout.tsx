@@ -1,11 +1,15 @@
-import { verifyTokenApi } from "@api/auth";
-import AppBar from "@components/appbar";
-import Sidebar from "@components/sidebar";
+import { verifyTokenApi } from "@/api/auth";
+import AppBar from "@/components/appbar";
+import Sidebar from "@/components/sidebar";
+import useUserStore from "@/stores/userStore";
+import {
+  APP_BAR_HEIGHT,
+  CLOSED_DRAWER_WIDTH,
+  OPEN_DRAWER_WIDTH,
+} from "@/utils/constants";
 import { Box, BoxProps, Skeleton, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import useUserStore from "@stores/userStore";
-import { APP_BAR_HEIGHT, CLOSED_DRAWER_WIDTH, OPEN_DRAWER_WIDTH } from "@utils/constants";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 interface OutletBoxProps extends BoxProps {
@@ -21,6 +25,7 @@ const OutletBox = styled(Box, {
   }),
   marginLeft: CLOSED_DRAWER_WIDTH,
   marginTop: APP_BAR_HEIGHT,
+  flexGrow: 1,
   variants: [
     {
       props: ({ open }) => open,
@@ -38,10 +43,10 @@ const OutletBox = styled(Box, {
 
 export default function AppLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const token = useUserStore(store => store.token);
+  const token = useUserStore((store) => store.token);
 
   const handleDrawerToggle = useCallback(() => {
-    setDrawerOpen(prevOpen => !prevOpen);
+    setDrawerOpen((prevOpen) => !prevOpen);
   }, []);
 
   const [validated, setValidated] = useState(false);
@@ -49,24 +54,17 @@ export default function AppLayout() {
 
   useEffect(() => {
     if (token && !validated) {
-      verifyTokenApi({token}).then(() => {
-        setValidated(true);
-      }).catch(() => {
-        navigate("/login");
-      });
+      verifyTokenApi({ token })
+        .then(() => {
+          setValidated(true);
+        })
+        .catch(() => {
+          navigate("/login");
+        });
     } else if (!token) {
       navigate("/login");
     }
   }, [token, validated, navigate]);
-
-
-  const appBar = useMemo(() => (
-    <AppBar open={drawerOpen} handleDrawerOpen={handleDrawerToggle} />
-  ), [drawerOpen, handleDrawerToggle]);
-
-  const sidebar = useMemo(() => (
-    <Sidebar open={drawerOpen} handleDrawerClose={handleDrawerToggle} />
-  ), [drawerOpen, handleDrawerToggle]);
 
   if (!validated) {
     return <Skeleton variant="rectangular" height={400} />;
@@ -74,8 +72,8 @@ export default function AppLayout() {
 
   return (
     <Stack>
-      {appBar}
-      {sidebar}
+      <AppBar open={drawerOpen} handleDrawerOpen={handleDrawerToggle} />
+      <Sidebar open={drawerOpen} handleDrawerClose={handleDrawerToggle} />
       <OutletBox open={drawerOpen}>
         <Outlet />
       </OutletBox>

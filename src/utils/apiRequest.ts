@@ -1,4 +1,4 @@
-import makeApiUrl from "./makeUrl";
+import makeApiUrl from "@/utils/makeUrl";
 
 type params = {
   path: string;

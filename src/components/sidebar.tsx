@@ -1,10 +1,13 @@
-import { memo, useMemo } from "react";
-import DrawerHeader from "@components/drawerHeader";
+import DrawerHeader from "@/components/drawerHeader";
+import { SidebarOption } from "@/types/sidebarOption";
+import { OPEN_DRAWER_WIDTH } from "@/utils/constants";
+import { closedMixin, openedMixin } from "@/utils/drawerMixins";
+import {
+  LOWER_SIDEBAR_OPTIONS,
+  UPPER_SIDEBAR_OPTIONS,
+} from "@/utils/sidebarOption";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import LogoutIcon from "@mui/icons-material/Logout";
-import PeopleIcon from "@mui/icons-material/People";
-import TuneIcon from "@mui/icons-material/Tune";
+
 import {
   Divider,
   IconButton,
@@ -18,9 +21,8 @@ import {
   Stack,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { OPEN_DRAWER_WIDTH } from "@utils/constants";
-import { closedMixin, openedMixin } from "@utils/drawerMixins";
-import { Link as RouterLink } from "react-router-dom"; 
+import { memo, useMemo } from "react";
+import { Link as RouterLink } from "react-router-dom";
 
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -46,38 +48,6 @@ const Drawer = styled(MuiDrawer, {
     },
   ],
 }));
-
-type SidebarOption = {
-  name: string;
-  icon: JSX.Element;
-  path: string;
-}
-
-const upperSidebarOptions: SidebarOption[] = [
-  {
-    name: "Dashboard",
-    icon: <DashboardIcon />,
-    path: "/",
-  },
-  {
-    name: "Users",
-    icon: <PeopleIcon />,
-    path: "/users",
-  },
-];
-
-const lowerSidebarOptions: SidebarOption[] = [
-  {
-    name: "Settings",
-    icon: <TuneIcon />,
-    path: "/settings",
-  },
-  {
-    name: "Logout",
-    icon: <LogoutIcon />,
-    path: "/logout",
-  },
-];
 
 type SidebarItemProps = {
   option: SidebarOption;
@@ -127,17 +97,21 @@ type SidebarProps = {
   handleDrawerClose: () => void;
 };
 
-const Sidebar = memo(({ open, handleDrawerClose }: SidebarProps) => {
-  const upperItems = useMemo(() => 
-    upperSidebarOptions.map(option => 
-      <SidebarItem key={option.name} option={option} open={open} />
-    ), [open]
+export default function Sidebar({ open, handleDrawerClose }: SidebarProps) {
+  const upperItems = useMemo(
+    () =>
+      UPPER_SIDEBAR_OPTIONS.map((option) => (
+        <SidebarItem key={option.name} option={option} open={open} />
+      )),
+    [open]
   );
 
-  const lowerItems = useMemo(() => 
-    lowerSidebarOptions.map(option => 
-      <SidebarItem key={option.name} option={option} open={open} />
-    ), [open]
+  const lowerItems = useMemo(
+    () =>
+      LOWER_SIDEBAR_OPTIONS.map((option) => (
+        <SidebarItem key={option.name} option={option} open={open} />
+      )),
+    [open]
   );
 
   return (
@@ -159,8 +133,4 @@ const Sidebar = memo(({ open, handleDrawerClose }: SidebarProps) => {
       </Stack>
     </Drawer>
   );
-});
-
-Sidebar.displayName = "Sidebar";
-
-export default Sidebar;
+}
